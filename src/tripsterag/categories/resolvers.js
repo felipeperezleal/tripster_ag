@@ -30,6 +30,8 @@ const resolvers = {
 		getRoute: (_, { id }) =>
 			generalRequest(`${URL3}/${id}`, 'GET'),
 		///////////////
+		getFlights: (_) =>
+			getRequest(`${URL4}/flights`, ''),		
 		FlightByOrigDest: (_, parameters ) =>
 			generalRequest(`${URL4}/flight`, 'GET',parameters),
 	},

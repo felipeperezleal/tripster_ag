@@ -96,15 +96,19 @@ export const flightTypeDef = `
     airport_name:String!
   }
 
-  type Flight_Airport{
+  type Flight_Airport_origin{
     _id:ID
     airport_origin_name:String!
   }
+  
+  type Flight_Airport_destination{
+    _id:ID
+    airport_destino_name:String!
+  }
 
   type Flight {
-    airport_origin:Flight_Airport!
-    airport_destination:Flight_Airport!
-    
+    airport_origin:Flight_Airport_origin!
+    airport_destination:Flight_Airport_destination!
     flight_airline:String!
     flight_seat_class:String!
     flight_escalas:[Flight_Escala]
@@ -126,6 +130,7 @@ export const flightTypeDef = `
       destination:String!
   }`;
   export const flightQueries = `
+      getFlights: [Flight]
       FlightByOrigDest(origin:String!,destination:String!): [Flight]
   `;
   export const countryMutations = `
