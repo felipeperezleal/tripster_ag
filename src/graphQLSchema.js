@@ -16,7 +16,9 @@ import {
 	routeMutations,
 	flightQueries,
 	flightTypeDef,
-	countryMutations
+	countryMutations,
+	loginMutations,
+	loginTypeDef
 } from './tripsterag/categories/typeDefs';
 
 import usuarioResolvers from './tripsterag/categories/resolvers';
@@ -29,7 +31,8 @@ const mergedTypeDefs = mergeSchemas(
 		usuarioTypeDef,
 		reservaTypeDef,
 		routeTypeDef,
-		flightTypeDef
+		flightTypeDef,
+		loginTypeDef
 	],
 	[
 		usuarioQueries,
@@ -41,7 +44,8 @@ const mergedTypeDefs = mergeSchemas(
 		usuarioMutations,
 		reservaMutations,
 		routeMutations,
-		countryMutations
+		countryMutations,
+		loginMutations
 	],
 );
 

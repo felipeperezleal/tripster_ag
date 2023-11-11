@@ -19,4 +19,9 @@ export const serverConfigurations = {
       port: '4999',
       entryPoint: 'flight'
     },
+    config5:{
+      url: 'host.docker.internal',
+      port: '3003',
+      entryPoint : 'usuarios'
+    }
   };
