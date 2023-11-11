@@ -31,7 +31,19 @@ export const usuarioMutations = `
     updateUsuario(email: String!, usuario: UsuarioInput!): Usuario!
     deleteUsuario(email: String!): String
 `;
-
+export const loginTypeDef =`
+  type AuthTokenResponse  {
+    token: String
+    msg: String
+  }
+  input LoginInput {
+    email: String!
+    clave: String!
+  }
+`;
+export const loginMutations = `
+  getLogin(login:LoginInput!): AuthTokenResponse!
+`;
 export const reservaTypeDef = `
   type Reserva{
     id: ID

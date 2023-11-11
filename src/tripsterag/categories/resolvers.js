@@ -13,6 +13,9 @@ const URL3 = `http://${selectedConfig3.url}:${selectedConfig3.port}/${selectedCo
 const selectedConfig4 = serverConfigurations.config4;
 const URL4 = `http://${selectedConfig4.url}:${selectedConfig4.port}/${selectedConfig4.entryPoint}`;
 
+const selectedConfig5 = serverConfigurations.config5;
+const URL5 = `http://${selectedConfig5.url}:${selectedConfig5.port}/${selectedConfig5.entryPoint}`;
+
 const resolvers = {
 	Query: {
 		allUsers: (_) =>
@@ -58,7 +61,10 @@ const resolvers = {
 			generalRequest(`${URL3}/${id}`, 'DELETE'),
 		////////////////
 		createCountry: (_, { country_name }) =>
-			generalRequest(`${URL4}/country`, 'POST', country_name)
+			generalRequest(`${URL4}/country`, 'POST', country_name),
+		/////////////////
+		getLogin: (_, { login }) =>
+			generalRequest(`${URL5}/login`, 'POST', login)
 	}
 };
 
