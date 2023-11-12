@@ -23,7 +23,9 @@ app.use(async (ctx, next) => {
 		if (token && token[1]) {
 			ctx.state.token = token[1];
 		}
+		console.log("Condicional",token);
 	}
+	console.log("autorización",ctx.header.authorization)
 	await next();
 });
 
