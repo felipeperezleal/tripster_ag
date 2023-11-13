@@ -49,7 +49,7 @@ export const reservaTypeDef = `
     id: ID
     booking_id: Int
     booking_flight_id: Int
-    booking_user_id: Int
+    booking_user_id: String
     booking_date: String
     booking_time: String
     booking_state: String
@@ -58,7 +58,7 @@ export const reservaTypeDef = `
   input ReservaInput {
     booking_id:Int!
     booking_flight_id: Int!
-    booking_user_id: Int!
+    booking_user_id: String!
     booking_date: String!
     booking_time: String!
     booking_state: String!

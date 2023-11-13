@@ -82,14 +82,14 @@ const resolvers = {
 	},
 	Mutation: {
 		createUsuario: (_, { usuario }) =>
-			generalRequest(`${URL1}`, 'POST', usuario),
+			generalRequest(`${URL1}`, 'POST',_ , usuario),
 		updateUsuario: async (_, { email, usuario }) =>
 			generalRequest(`${URL1}/${email}`, 'PUT', usuario),
 		deleteUsuario: (_, { email }) =>
 			generalRequest(`${URL1}/${email}`, 'DELETE'),
 		//////////////
 		createReserva: async (_, { reserva }, context) => {
-			return validateTokenAndProceed(context.token, () => generalRequest(`${URL2}`, 'POST', reserva));
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL2}`, 'POST',_,reserva));
 		},
 		updateReserva: async (_, { id, reserva }, context) => {
 			return validateTokenAndProceed(context.token, () => generalRequest(`${URL2}/${id}`, 'PUT', reserva));
