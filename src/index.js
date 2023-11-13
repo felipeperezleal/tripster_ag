@@ -30,9 +30,10 @@ app.use(async (ctx, next) => {
 // GraphQL
 const graphql = graphqlKoa((ctx) => ({
 	schema: graphQLSchema,
-	context: { token: ctx.state.token },
+	context: { token: ctx.header.authorization },
 	formatError: formatErr
 }));
+
 router.post('/graphql', koaBody(), graphql);
 router.get('/graphql', graphql);
 
