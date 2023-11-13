@@ -3,6 +3,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { makeExecutableSchema } from 'graphql-tools';
 
 import { mergeSchemas } from './utilities';
+import { isAuthenticated } from './tripsterag/categories/auth';
 
 import {
 	usuarioQueries,
@@ -18,7 +19,7 @@ import {
 	flightTypeDef,
 	countryMutations,
 	loginMutations,
-	loginTypeDef
+	loginTypeDef,
 } from './tripsterag/categories/typeDefs';
 
 import usuarioResolvers from './tripsterag/categories/resolvers';
@@ -38,7 +39,7 @@ const mergedTypeDefs = mergeSchemas(
 		usuarioQueries,
 		reservaQueries,
 		routeQueries,
-		flightQueries
+		flightQueries,
 	],
 	[
 		usuarioMutations,
@@ -51,9 +52,10 @@ const mergedTypeDefs = mergeSchemas(
 
 // Generate the schema object from your types definition.
 export default makeExecutableSchema({
-	typeDefs: mergedTypeDefs,
+	typeDefs: mergedTypeDefs,	
 	resolvers: merge(
 		{ JSON: GraphQLJSON }, // allows scalar JSON
 		usuarioResolvers
-	)
+	),
+	context:{isAuthenticated}
 });

@@ -23,18 +23,17 @@ app.use(async (ctx, next) => {
 		if (token && token[1]) {
 			ctx.state.token = token[1];
 		}
-		console.log("Condicional",token);
 	}
-	console.log("autorización",ctx.header.authorization)
 	await next();
 });
 
 // GraphQL
 const graphql = graphqlKoa((ctx) => ({
 	schema: graphQLSchema,
-	context: { token: ctx.state.token },
+	context: { token: ctx.header.authorization },
 	formatError: formatErr
 }));
+
 router.post('/graphql', koaBody(), graphql);
 router.get('/graphql', graphql);
 

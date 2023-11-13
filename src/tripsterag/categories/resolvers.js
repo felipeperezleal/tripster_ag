@@ -1,6 +1,7 @@
 import { generalRequest, getRequest } from '../../utilities';
 import { serverConfigurations } from './server';
 import ldap from 'ldapjs';
+import { isAuthenticated } from './auth';
 
 const selectedConfig1 = serverConfigurations.config1;
 const URL1 = `http://${selectedConfig1.url}:${selectedConfig1.port}/${selectedConfig1.entryPoint}`;
@@ -37,47 +38,65 @@ const authenticateWithLDAP = (email, password) => {
 	});
 };
 
+//Validación del token
+const validateTokenAndProceed = async (token, requestedFunction) => {
+	const isValidToken = await isAuthenticated(token);
+	if (isValidToken) {
+		return requestedFunction();
+	} else {
+		throw new Error("Token no válido. Operación no permitida");
+	}
+}
+
 
 
 const resolvers = {
 	Query: {
-		allUsers: (_) =>
-			getRequest(URL1, ''),
-		usuarioByNombre: (_, { nombre }) =>
-			generalRequest(`${URL1}/${nombre}`, 'GET'),
+		allUsers: async (_, __, context) => {
+			return validateTokenAndProceed(context.token, () => getRequest(URL1, ''));
+		},
+		usuarioByNombre: async (_, { nombre }, context) => {
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL1}/${nombre}`, 'GET'));
+		},
 		//////////////
-		reservaById: (_, { id }) =>
-			generalRequest(`${URL2}/${id}`, 'GET'),
-		allBookings: (_) =>
-			getRequest(URL2, ''),
+		reservaById: async (_, { id }, context) => {
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL2}/${id}`, 'GET'));
+		},
+		allBookings: (_, __, context) => {
+			return validateTokenAndProceed(context.token, () => getRequest(URL2, ''));
+		},
 		///////////////
-		getRoutes: (_) =>
-			getRequest(URL3, ''),
-		getRoute: (_, { id }) =>
-			generalRequest(`${URL3}/${id}`, 'GET'),
+		getRoutes: async (_, __, context) => {
+			return validateTokenAndProceed(context.token, () => getRequest(URL3, ''));
+		},
+		getRoute: async (_, { id }, context) => {
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL3}/${id}`, 'GET'));
+		},
 		///////////////
-		getFlights: (_) =>
-			getRequest(`${URL4}/flights`, ''),
-		FlightByOrigDest: (_, parameters) =>
-			generalRequest(`${URL4}/flight`, 'GET', parameters),
+		getFlights: async (_, __, context) => {
+			return validateTokenAndProceed(context.token, () => getRequest(`${URL4}/flights`, ''));
+		},
+		FlightByOrigDest: (_, parameters, context) => {
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL4}/flight`, 'GET', parameters));
+		},
 	},
 	Mutation: {
 		createUsuario: (_, { usuario }) =>
 			generalRequest(`${URL1}`, 'POST', usuario),
-		updateUsuario: async (_, { email, usuario }) => {
-			// Authenticate the user before allowing the mutation
-			await authenticateWithLDAP(email, usuario.clave);
-			return generalRequest(`${URL1}/${email}`, 'PUT', usuario);
-		},
+		updateUsuario: async (_, { email, usuario }) =>
+			generalRequest(`${URL1}/${email}`, 'PUT', usuario),
 		deleteUsuario: (_, { email }) =>
 			generalRequest(`${URL1}/${email}`, 'DELETE'),
 		//////////////
-		createReserva: (_, { reserva }) =>
-			generalRequest(`${URL2}`, 'POST', reserva),
-		updateReserva: (_, { id, reserva }) =>
-			generalRequest(`${URL2}/${id}`, 'PUT', reserva),
-		deleteReserva: (_, { id }) =>
-			generalRequest(`${URL2}/${id}`, 'DELETE'),
+		createReserva: async (_, { reserva }, context) => {
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL2}`, 'POST', reserva));
+		},
+		updateReserva: async (_, { id, reserva }, context) => {
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL2}/${id}`, 'PUT', reserva));
+		},
+		deleteReserva: (_, { id }, context) => {
+			return validateTokenAndProceed(context.token, () => generalRequest(`${URL2}/${id}`, 'DELETE'));
+		},
 		///////////////	
 		createRoute: (_, { route }) =>
 			generalRequest(`${URL3}`, 'POST', route),
@@ -89,8 +108,11 @@ const resolvers = {
 		createCountry: (_, { country_name }) =>
 			generalRequest(`${URL4}/country`, 'POST', country_name),
 		/////////////////
-		getLogin: (_, { login }) =>
-			generalRequest(`${URL5}/login`, 'POST', login)
+		getLogin: async (_, { login }) => {
+			// Authenticate the user before allowing the mutation
+			await authenticateWithLDAP(login.email, login.clave);
+			return generalRequest(`${URL5}/login`, 'POST', _, login)
+		}
 	}
 };
 

@@ -7,8 +7,16 @@ const authURL = `http://${authServerConfig.url}:${authServerConfig.port}/${authS
 
 export const isAuthenticated = async (token) =>{
     try {
-        const response = await generalRequest(`${authURL}`,'GET');
-        return response.isValid;
+        const headers = {
+            authorization: token, 
+          };
+        const response = await generalRequest(`${authURL}/info`,'POST',headers);
+        if(response.token){
+            return true;
+        }else{
+            return false;
+        }
+        
     } catch (error) {
         console.error('Error al autenticar:', error);
         return false;
